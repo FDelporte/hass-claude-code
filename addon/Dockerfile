@@ -23,7 +23,9 @@ RUN git clone --depth 1 --branch "${DOCS_REF}" "${DOCS_REPO}" /tmp/repo && \
 
 # Install MCP server dependencies
 COPY mcp-server/package.json mcp-server/pnpm-lock.yaml* ./mcp-server/
-RUN cd mcp-server && (pnpm install --frozen-lockfile 2>/dev/null || pnpm install) && pnpm approve-builds --yes
+RUN cd mcp-server && \
+    printf 'onlyBuiltDependencies:\n  - better-sqlite3\n  - esbuild\n  - onnxruntime-node\n  - protobufjs\n  - sharp\n' > pnpm-workspace.yaml && \
+    (pnpm install --frozen-lockfile 2>/dev/null || pnpm install)
 
 # Copy MCP server source
 COPY mcp-server/ ./mcp-server/
